@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+
 
 @RequestMapping("/users")
 public interface UserApi {
@@ -26,4 +30,12 @@ public interface UserApi {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     UserDto createUser(@RequestBody UserForm userForm);
+
+    @Operation(summary = "List all users")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Service error", content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping
+    List<UserDto> getAllUsers();
 }

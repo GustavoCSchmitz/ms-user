@@ -1,5 +1,6 @@
 package br.com.user.model;
 
+import br.com.user.model.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,5 @@ public class User implements Serializable {
     @Id
     private String id;
     private String name;
+    private Status status;
 }
