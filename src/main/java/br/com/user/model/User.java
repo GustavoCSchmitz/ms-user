@@ -25,4 +25,9 @@ public class User implements Serializable {
     private String id;
     private String name;
     private Status status;
+
+    public User(String name, Status status){
+        setName(name);
+        setStatus(status);
+    }
 }

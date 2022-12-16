@@ -1,10 +1,12 @@
 package br.com.user.service;
 
 import br.com.user.api.form.UserForm;
+import br.com.user.api.form.UserFormPut;
 import br.com.user.dto.UserDto;
 import br.com.user.model.User;
 import br.com.user.model.enums.Status;
 import br.com.user.repository.UserRepository;
+import br.com.user.util.CopyPropertiesUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +27,7 @@ public class UserService {
     @Transactional
     public UserDto createUser(@Valid UserForm form) {
         try{
-            User user = getUser(form);
+            User user = form.toUser(form);
             User savedUser = saveUser(user);
             UserDto userDto = new UserDto(savedUser);
             log.info("User created sucessfully");
@@ -56,6 +58,28 @@ public class UserService {
         return userDto;
     }
 
+    @Transactional
+    public UserDto updateUser(String id, UserFormPut form) {
+        User user = findUserById(id);
+        User userUpdated = updateUser(form, user);
+
+        UserDto userDto = new UserDto(userUpdated);
+        log.info("User updated successfully");
+
+        return userDto;
+    }
+
+    private User updateUser(UserFormPut form, User user) {
+        try{
+            User userUpdated = form.toUser();
+            CopyPropertiesUtils.copyFieldsNotNull(user, userUpdated);
+            return saveUser(user);
+        }catch (Exception e){
+            log.error("Cannot update user");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     private List<User> getAllUsersList() {
         return repository.findAll();
     }
@@ -64,10 +88,8 @@ public class UserService {
         return repository.save(user);
     }
 
-    private User getUser(UserForm form) {
-        return User.builder()
-                .name(form.name())
-                .status(Status.ACTIVE)
-                .build();
+    private User findUserById(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
