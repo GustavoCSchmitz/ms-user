@@ -10,6 +10,7 @@ import br.com.user.util.CopyPropertiesUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -91,5 +92,16 @@ public class UserService {
     private User findUserById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    public ResponseEntity deleteUser(String id) {
+        try {
+            repository.deleteById(id);
+            log.info("User deleted successfully");
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            log.error("Cannot delete user");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }

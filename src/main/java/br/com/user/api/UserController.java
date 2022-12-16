@@ -7,6 +7,7 @@ import br.com.user.dto.UserDto;
 import br.com.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -41,6 +42,12 @@ public class UserController implements UserApi {
     public UserDto updateUser(String id, @Valid UserFormPut form) {
         log.info("[USER - API] Updating user");
         return service.updateUser(id, form);
+    }
+
+    @Override
+    public ResponseEntity deleteUser(String id) {
+        log.info("[USER - API] Deleting user");
+        return service.deleteUser(id);
     }
 
 }
