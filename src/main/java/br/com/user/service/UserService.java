@@ -3,12 +3,13 @@ package br.com.user.service;
 import br.com.user.api.form.UserForm;
 import br.com.user.api.form.UserFormPut;
 import br.com.user.dto.UserDto;
+import br.com.user.exceptions.NotFoundException;
+import br.com.user.exceptions.UserException;
 import br.com.user.model.User;
-import br.com.user.model.enums.Status;
 import br.com.user.repository.UserRepository;
 import br.com.user.util.CopyPropertiesUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,12 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository repository;
+    private static final String USER_NOT_FOUND_MESSAGE = "User not found";
+
+    private final UserRepository repository;
 
     @Transactional
     public UserDto createUser(@Valid UserForm form) {
@@ -50,13 +53,7 @@ public class UserService {
     public UserDto getUserById(String id) {
         return repository.findById(id)
                 .map(this::getUserDTO)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    private UserDto getUserDTO(User user) {
-        UserDto userDto = new UserDto(user);
-        log.info("User returned");
-        return userDto;
+                .orElseThrow(this::handleNotFoundException);
     }
 
     @Transactional
@@ -70,6 +67,17 @@ public class UserService {
         return userDto;
     }
 
+    public ResponseEntity deleteUser(String id) {
+        try {
+            repository.deleteById(id);
+            log.info("User deleted successfully");
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            log.error("Cannot delete user");
+            throw new UserException(e.getMessage());
+        }
+    }
+
     private User updateUser(UserFormPut form, User user) {
         try{
             User userUpdated = form.toUser();
@@ -77,7 +85,7 @@ public class UserService {
             return saveUser(user);
         }catch (Exception e){
             log.error("Cannot update user");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new UserException(e.getMessage());
         }
     }
 
@@ -94,14 +102,14 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    public ResponseEntity deleteUser(String id) {
-        try {
-            repository.deleteById(id);
-            log.info("User deleted successfully");
-            return ResponseEntity.noContent().build();
-        }catch (Exception e){
-            log.error("Cannot delete user");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+    private NotFoundException handleNotFoundException() {
+        log.error(USER_NOT_FOUND_MESSAGE);
+        return new NotFoundException(USER_NOT_FOUND_MESSAGE);
+    }
+
+    private UserDto getUserDTO(User user) {
+        UserDto userDto = new UserDto(user);
+        log.info("User returned");
+        return userDto;
     }
 }
