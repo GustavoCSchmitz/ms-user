@@ -34,7 +34,7 @@ public class UserService {
             User user = form.toUser(form);
             User savedUser = saveUser(user);
             UserDto userDto = new UserDto(savedUser);
-            log.info("User created sucessfully");
+            log.info("User created successfully");
             return userDto;
         }catch (Exception e){
             log.error("Cannot save user");
@@ -99,7 +99,7 @@ public class UserService {
 
     private User findUserById(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(this::handleNotFoundException);
     }
 
     private NotFoundException handleNotFoundException() {
