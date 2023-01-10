@@ -10,11 +10,9 @@ import br.com.user.repository.UserRepository;
 import br.com.user.util.CopyPropertiesUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,7 +36,7 @@ public class UserService {
             return userDto;
         }catch (Exception e){
             log.error("Cannot save user");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new UserException(e.getMessage());
         }
     }
 

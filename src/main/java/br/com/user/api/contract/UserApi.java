@@ -71,7 +71,7 @@ public interface UserApi {
             @RequestBody UserFormPut form
     );
 
-    @Operation(summary = "Get a user by id")
+    @Operation(summary = "Delete a user by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No content"),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = "application/json")),
