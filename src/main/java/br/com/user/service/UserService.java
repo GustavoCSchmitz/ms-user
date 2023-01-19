@@ -10,7 +10,6 @@ import br.com.user.repository.UserRepository;
 import br.com.user.util.CopyPropertiesUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,11 +64,10 @@ public class UserService {
         return userDto;
     }
 
-    public ResponseEntity deleteUser(String id) {
+    public void deleteUser(String id) {
         try {
             repository.deleteById(id);
             log.info("User deleted successfully");
-            return ResponseEntity.noContent().build();
         }catch (Exception e){
             log.error("Cannot delete user");
             throw new UserException(e.getMessage());

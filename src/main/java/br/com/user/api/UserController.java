@@ -7,7 +7,6 @@ import br.com.user.dto.UserDto;
 import br.com.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -45,9 +44,9 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity deleteUser(String id) {
+    public void deleteUser(String id) {
         log.info("[USER - API] Deleting user");
-        return service.deleteUser(id);
+        service.deleteUser(id);
     }
 
 }
